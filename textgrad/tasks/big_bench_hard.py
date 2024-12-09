@@ -64,6 +64,7 @@ def string_based_equality_fn(prediction: tg.Variable, ground_truth_answer: tg.Va
 
 
 def cosine_distance_based_equality_fn(prediction: tg.Variable, ground_truth_answer: tg.Variable):
+    print(f"prediction {prediction} ground_truth_answer {ground_truth_answer}")
     return 0 if cosine_similarity(str(prediction.value) ,str(ground_truth_answer.value))<0.5 else 1
 
 
