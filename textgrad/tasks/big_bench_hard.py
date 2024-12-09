@@ -69,6 +69,7 @@ def cosine_distance_based_equality_fn(prediction: tg.Variable, ground_truth_answ
 
 class BigBenchHard(Dataset):
     def __init__(self, task_name: str, root: str=None, split: str="train", *args, **kwargs):
+        print("**kwargs", **kwargs)
         """
         Tasks from BIG-Bench Hard
         <https://github.com/suzgunmirac/BIG-Bench-Hard>
