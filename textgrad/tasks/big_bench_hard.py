@@ -143,6 +143,7 @@ class BigBenchHard(Dataset):
 
             test_path = os.path.join(output_dir, "test.csv")
             test_examples.to_csv(test_path, index=False)
+            print(f"train_end {train_end} val_end {val_end} train_path {train_path}")
         else:
             # Separate to train, val, test
             data = json.load(open(os.path.join(self.root, f"{self.task_name}.json")))
