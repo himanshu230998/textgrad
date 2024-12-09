@@ -84,6 +84,7 @@ class BigBenchHard(Dataset):
         self.root = root
         self.split = split
         self.task_name = task_name
+        self.url = kwargs.get('url')
         self._check_or_download_dataset()
         assert split in ["train", "val", "test"]
         data_path = os.path.join(self.root, self.task_name, f"{split}.csv")
@@ -102,29 +103,59 @@ class BigBenchHard(Dataset):
         # Download the dataset
         # Download from https://github.com/suzgunmirac/BIG-Bench-Hard/blob/main/bbh/[task_name].json
         # and save it to self.root
-        subprocess.call(
-            [
-                "wget",
-                f"https://raw.githubusercontent.com/suzgunmirac/BIG-Bench-Hard/main/bbh/{self.task_name}.json",
-                "-O",
-                os.path.join(self.root, f"{self.task_name}.json")
-            ]
-        )
-        # Separate to train, val, test
-        data = json.load(open(os.path.join(self.root, f"{self.task_name}.json")))
-        examples = data["examples"]
-        train_examples = [{"x": ex["input"], "y": ex["target"]} for ex in examples[:50]]
-        val_examples = [{"x": ex["input"], "y": ex["target"]} for ex in examples[50:150]]
-        test_examples = [{"x": ex["input"], "y": ex["target"]} for ex in examples[150:]]
-        train_path = os.path.join(self.root, self.task_name, "train.csv")
-        with open(train_path, "w") as f:
-            pd.DataFrame(train_examples).to_csv(f)
-        val_path = os.path.join(self.root, self.task_name, "val.csv")
-        with open(val_path, "w") as f:
-            pd.DataFrame(val_examples).to_csv(f)
-        test_path = os.path.join(self.root, self.task_name, "test.csv")
-        with open(test_path, "w") as f:
-            pd.DataFrame(test_examples).to_csv(f)
+        if not self.url:
+            subprocess.call(
+                [
+                    "wget",
+                    f"{self.url}",
+                    "-O",
+                    os.path.join(self.root, f"{self.task_name}.csv")
+                ]
+            )
+            csv_path = os.path.join(self.root, f"{self.task_name}.csv")
+            data = pd.read_csv(csv_path)
+
+            # Shuffle the data to ensure randomness
+            data = data.sample(frac=1, random_state=42).reset_index(drop=True)
+
+            # Calculate split indices
+            total = len(data)
+            train_end = int(total * 0.6)
+            val_end = train_end + int(total * 0.2)
+
+            # Split the data
+            train_examples = data.iloc[:train_end]
+            val_examples = data.iloc[train_end:val_end]
+            test_examples = data.iloc[val_end:]
+
+            # Save the splits to separate CSV files
+            output_dir = os.path.join(self.root, self.task_name)
+            os.makedirs(output_dir, exist_ok=True)
+
+            train_path = os.path.join(output_dir, "train.csv")
+            train_examples.to_csv(train_path, index=False)
+
+            val_path = os.path.join(output_dir, "val.csv")
+            val_examples.to_csv(val_path, index=False)
+
+            test_path = os.path.join(output_dir, "test.csv")
+            test_examples.to_csv(test_path, index=False)
+        else:
+            # Separate to train, val, test
+            data = json.load(open(os.path.join(self.root, f"{self.task_name}.json")))
+            examples = data["examples"]
+            train_examples = [{"x": ex["input"], "y": ex["target"]} for ex in examples[:50]]
+            val_examples = [{"x": ex["input"], "y": ex["target"]} for ex in examples[50:150]]
+            test_examples = [{"x": ex["input"], "y": ex["target"]} for ex in examples[150:]]
+            train_path = os.path.join(self.root, self.task_name, "train.csv")
+            with open(train_path, "w") as f:
+                pd.DataFrame(train_examples).to_csv(f)
+            val_path = os.path.join(self.root, self.task_name, "val.csv")
+            with open(val_path, "w") as f:
+                pd.DataFrame(val_examples).to_csv(f)
+            test_path = os.path.join(self.root, self.task_name, "test.csv")
+            with open(test_path, "w") as f:
+                pd.DataFrame(test_examples).to_csv(f)
         
     
     def __getitem__(self, index):
