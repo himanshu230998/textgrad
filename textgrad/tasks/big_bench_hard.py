@@ -170,6 +170,7 @@ class BigBenchHard(Dataset):
     
     def __getitem__(self, index):
         row = self.data.iloc[index]
+        print(f"row {row}")
         return row["x"], row["y"]
     
     def __len__(self):
