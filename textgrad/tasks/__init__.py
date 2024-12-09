@@ -29,6 +29,7 @@ def load_task(task_name: str, evaluation_api: EngineLM, *args, **kwargs) -> Tupl
         from textgrad.loss import MultiFieldTokenParsedEvaluation
         from .big_bench_hard import BigBenchHard, cosine_distance_based_equality_fn
         from textgrad.autograd.string_based_ops import StringBasedFunction
+        print(f"task_name *args {args} **kwargs  {kwargs}")
         task_name = task_name
         train_set = BigBenchHard(task_name, split="train", *args, **kwargs)
         val_set = BigBenchHard(task_name, split="val", *args, **kwargs)
