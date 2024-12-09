@@ -64,7 +64,7 @@ def string_based_equality_fn(prediction: tg.Variable, ground_truth_answer: tg.Va
 
 
 def cosine_distance_based_equality_fn(prediction: tg.Variable, ground_truth_answer: tg.Variable):
-    return 0 if cosine_similarity(str(prediction.value) ,str(ground_truth_answer.value))<0.3 else 1
+    return 0 if cosine_similarity(str(prediction.value) ,str(ground_truth_answer.value))<0.5 else 1
 
 
 class BigBenchHard(Dataset):
