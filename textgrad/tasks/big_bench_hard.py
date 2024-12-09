@@ -6,6 +6,39 @@ import platformdirs
 import textgrad as tg
 from .base import Dataset
 
+import requests
+import numpy as np
+
+def emb(word):
+    url = "https://ks-ai-tools.dev.ks.samagra.io/embeddings/bge-small_gpu/local/"
+
+    headers = {
+        "Content-Type": "application/json"
+    }
+    data = {
+        "query": [word],
+        "type": "query"
+    }
+
+    response = requests.post(url, headers=headers, json=data)
+
+    if response.status_code == 200:
+        pass
+    else:
+        pass
+    return response.json()['embeddings']
+
+def cosine_similarity(word1, word2):
+    vec1 = emb(word1)[0]
+    vec2 = emb(word2)[0]
+    dot_product = np.dot(vec1, vec2)
+    norm_vec1 = np.linalg.norm(vec1)
+    norm_vec2 = np.linalg.norm(vec2)
+
+    return dot_product / (norm_vec1 * norm_vec2)
+
+
+
 # The below metric is taken from DSPy for consistenc
 # and modified to work with TG-graphs
 
@@ -28,6 +61,10 @@ def parse_integer_answer(answer: str, only_first_line: bool=False):
 
 def string_based_equality_fn(prediction: tg.Variable, ground_truth_answer: tg.Variable):
     return int(parse_integer_answer(str(prediction.value)) == int(parse_integer_answer(str(ground_truth_answer.value))))
+
+
+def cosine_distance_based_equality_fn(prediction: tg.Variable, ground_truth_answer: tg.Variable):
+    return 0 if cosine_similarity(str(prediction.value) ,str(ground_truth_answer.value))<0.3 else 1
 
 
 class BigBenchHard(Dataset):

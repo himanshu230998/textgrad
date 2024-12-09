@@ -29,6 +29,7 @@ def validate_multimodal_engine(engine):
             f"The engine provided is not multimodal. Please provide a multimodal engine, one of the following: {__MULTIMODAL_ENGINES__}")
 
 def get_engine(engine_name: str, **kwargs) -> EngineLM:
+    print(f"engine_name : {engine_name}")
     if engine_name in __ENGINE_NAME_SHORTCUTS__:
         engine_name = __ENGINE_NAME_SHORTCUTS__[engine_name]
 
@@ -42,7 +43,10 @@ def get_engine(engine_name: str, **kwargs) -> EngineLM:
     if engine_name.startswith("experimental:"):
         engine_name = engine_name.split("experimental:")[1]
         return LiteLLMEngine(model_string=engine_name, **kwargs)
-    if engine_name.startswith("azure"):
+    if "krutrim" in engine_name:
+        from .krutrim import Krutrim
+        return Krutrim(model_string=engine_name, **kwargs)
+    elif engine_name.startswith("azure"):
         from .openai import AzureChatOpenAI
         # remove engine_name "azure-" prefix
         engine_name = engine_name[6:]
