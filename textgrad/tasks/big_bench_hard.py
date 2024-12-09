@@ -104,6 +104,7 @@ class BigBenchHard(Dataset):
         # Download from https://github.com/suzgunmirac/BIG-Bench-Hard/blob/main/bbh/[task_name].json
         # and save it to self.root
         if not self.url:
+            print(f"self.url {self.url}")
             subprocess.call(
                 [
                     "wget",
