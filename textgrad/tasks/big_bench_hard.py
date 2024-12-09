@@ -89,7 +89,10 @@ class BigBenchHard(Dataset):
         self._check_or_download_dataset()
         assert split in ["train", "val", "test"]
         data_path = os.path.join(self.root, self.task_name, f"{split}.csv")
-        self.data = pd.read_csv(data_path, index_col=0)
+        if self.url:
+            self.data = pd.read_csv(data_path)
+        else:
+            self.data = pd.read_csv(data_path, index_col=0)
         self._task_description = "You will answer a reasoning question. Think step by step. The last line of your response should be of the following format: 'Answer: $VALUE' where VALUE is a numerical value."
     
     def get_task_description(self):
@@ -170,7 +173,6 @@ class BigBenchHard(Dataset):
     
     def __getitem__(self, index):
         row = self.data.iloc[index]
-        print(f"row {row}")
         return row["x"], row["y"]
     
     def __len__(self):
