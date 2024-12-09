@@ -115,6 +115,7 @@ class BigBenchHard(Dataset):
                 ]
             )
             csv_path = os.path.join(self.root, f"{self.task_name}.csv")
+            print(f"csv_path {csv_path}")
             data = pd.read_csv(csv_path)
             print(data.head(2))
 
