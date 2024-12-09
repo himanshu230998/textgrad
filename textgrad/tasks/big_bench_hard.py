@@ -126,9 +126,9 @@ class BigBenchHard(Dataset):
             total = len(data)
             train_end = int(total * 0.6)
             val_end = train_end + int(total * 0.2)
-            train_examples = [{"x": row["Query"], "y": row["golden_answer"]} for _, row in data.iloc[:train_end].iterrows()]
-            val_examples = [{"x": row["Query"], "y": row["golden_answer"]} for _, row in data.iloc[train_end:val_end].iterrows()]
-            test_examples = [{"x": row["Query"], "y": row["golden_answer"]} for _, row in data.iloc[val_end:].iterrows()]
+            train_examples = [{"x": row["input"], "y": row["target"]} for _, row in data.iloc[:train_end].iterrows()]
+            val_examples = [{"x": row["input"], "y": row["target"]} for _, row in data.iloc[train_end:val_end].iterrows()]
+            test_examples = [{"x": row["input"], "y": row["target"]} for _, row in data.iloc[val_end:].iterrows()]
 
 
             # Split the data
