@@ -126,6 +126,10 @@ class BigBenchHard(Dataset):
             total = len(data)
             train_end = int(total * 0.6)
             val_end = train_end + int(total * 0.2)
+            train_examples = [{"x": row["Query"], "y": row["golden_answer"]} for _, row in data.iloc[:train_end].iterrows()]
+            val_examples = [{"x": row["Query"], "y": row["golden_answer"]} for _, row in data.iloc[train_end:val_end].iterrows()]
+            test_examples = [{"x": row["Query"], "y": row["golden_answer"]} for _, row in data.iloc[val_end:].iterrows()]
+
 
             # Split the data
             train_examples = data.iloc[:train_end]
@@ -144,6 +148,7 @@ class BigBenchHard(Dataset):
 
             test_path = os.path.join(output_dir, "test.csv")
             test_examples.to_csv(test_path, index=False)
+
             print(f"train_end {train_end} val_end {val_end} train_path {train_path}")
         else:
             # Separate to train, val, test
