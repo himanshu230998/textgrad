@@ -116,6 +116,7 @@ class BigBenchHard(Dataset):
             )
             csv_path = os.path.join(self.root, f"{self.task_name}.csv")
             data = pd.read_csv(csv_path)
+            print(data.head(2))
 
             # Shuffle the data to ensure randomness
             data = data.sample(frac=1, random_state=42).reset_index(drop=True)
